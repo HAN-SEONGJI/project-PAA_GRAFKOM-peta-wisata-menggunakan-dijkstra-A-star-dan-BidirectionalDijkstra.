@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Peta Spasial Perkotaan — Navigasi Dijkstra</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>&#x1F3D9; Peta Spasial Perkotaan &#x2014; Navigasi Jalan</h1>
+      <div class="badges">
+        <span class="badge">Grafika Komputer</span>
+        <span class="badge">Dijkstra + Bezier</span>
+        <span class="badge">UMRAH 2026</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-green"  id="btnStart">&#9654; Start</button>
+      <button class="btn btn-purple" id="btnRandMap">&#x1F500; Acak Peta</button>
+      <button class="btn btn-purple" id="btnRandPos">&#x1F3B2; Acak Posisi Awal</button>
+      <button class="btn btn-blue"   id="btnSetStart">&#x1F7E2; Set Asal</button>
+      <button class="btn btn-blue"   id="btnSetGoal">&#x1F534; Set Tujuan</button>
+      <button class="btn btn-red"    id="btnReset">&#x1F504; Reset</button>
+      <input type="text" id="seedInput" placeholder="Seed Peta..." style="background: #333; color: white; border: 1px solid #555; padding: 6px 10px; font-family: inherit; font-size: 0.9rem; border-radius: 4px; outline: none; width: 120px;" title="Masukkan kata kunci/seed untuk Map yang deterministik (ala Minecraft)"/>
+      <button class="btn" id="btnToggleTiles" style="background: #4b5563; color: white; border: 1px solid #555; padding: 6px 12px; border-radius: 4px; cursor: pointer;">&#x25A6; Map Tiles: OFF</button>
+      <select id="algoSelect" class="btn" style="background: #333; color: white; border: 1px solid #555; padding: 6px 12px; font-family: inherit; font-size: 0.9rem; border-radius: 4px; cursor: pointer; outline: none;">
+        <option value="dijkstra">Dijkstra</option>
+        <option value="astar">A* (A-Star)</option>
+        <option value="bidirectional">Bidirectional Dijkstra</option>
+      </select>
+      <span class="kbd-hint"><strong>Spasi</strong> Start/Pause &nbsp;|&nbsp; <strong>R</strong> Acak Peta</span>
+    </div>
+
+    <div class="main-content">
+
+      <!-- Canvas -->
+      <div class="canvas-container">
+        <canvas id="mapCanvas"></canvas>
+        <div class="map-hint">Scroll: Zoom &nbsp;|&nbsp; Drag: Geser &nbsp;|&nbsp; Klik Node: Pilih Titik</div>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel">
+
+        <!-- 1. System Status -->
+        <div class="info-section">
+          <div class="section-title">&#x1F3AF; System Status</div>
+          <div id="systemStatus">
+            <span class="status-dot status-ready"></span>
+            <span id="statusText">Siap</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <!-- 2. Route Planning -->
+        <div class="info-section">
+          <div class="section-title">&#x1F4CD; Perencanaan Rute</div>
+          <div class="nav-grid">
+            <div class="nav-item">
+              <div class="nav-label">&#x1F7E2; Titik Asal</div>
+              <div class="nav-val" id="navStart">&#x2014;</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-label">&#x1F534; Titik Tujuan</div>
+              <div class="nav-val" id="navGoal">&#x2014;</div>
+            </div>
+          </div>
+          <div class="nav-item full">
+            <div class="nav-label">&#x1F9ED; Urutan Rute</div>
+            <div class="nav-val small" id="navRoute">&#x2014;</div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-card">
+              <div class="metric-label">Total Jarak</div>
+              <div class="metric-val gold" id="navTotalDist">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Jumlah Hops</div>
+              <div class="metric-val blue" id="navHops">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Waktu Analisis</div>
+              <div class="metric-val green" id="navAnalysisTime">&#x2014;</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Live Navigation -->
+        <div class="info-section">
+          <div class="section-title">&#x1F6F0; Live Navigation</div>
+
+          <div class="live-progress-wrap">
+            <div class="live-progress-bar">
+              <div class="live-progress-fill" id="liveProgressFill"></div>
+            </div>
+            <span class="live-progress-label" id="liveProgressPct">0%</span>
+          </div>
+
+          <div class="nav-grid">
+            <div class="nav-item">
+              <div class="nav-label">Posisi X</div>
+              <div class="nav-val mono" id="livePosX">&#x2014;</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-label">Posisi Y</div>
+              <div class="nav-val mono" id="livePosY">&#x2014;</div>
+            </div>
+          </div>
+
+          <div class="nav-item full">
+            <div class="nav-label">&#x1F3CE; Segmen Aktif</div>
+            <div class="nav-val small" id="liveSegment">&#x2014;</div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-card">
+              <div class="metric-label">Kecepatan</div>
+              <div class="metric-val gold" id="liveSpeed">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Ditempuh</div>
+              <div class="metric-val blue" id="liveTraveled">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Tersisa</div>
+              <div class="metric-val red" id="liveRemain">&#x2014;</div>
+            </div>
+          </div>
+
+          <div class="metric-row" style="margin-top:6px">
+            <div class="metric-card">
+              <div class="metric-label">Waktu Jalan</div>
+              <div class="metric-val green" id="liveElapsed">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Est. Tiba</div>
+              <div class="metric-val purple" id="liveETA">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Sudut Arah</div>
+              <div class="metric-val mono" id="liveAngle">&#x2014;</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Map Statistics -->
+        <div class="info-section">
+          <div class="section-title">&#x1F5FA; Statistik Peta</div>
+          <div class="metric-row">
+            <div class="metric-card">
+              <div class="metric-label">Total Node</div>
+              <div class="metric-val blue" id="navNodes">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Total Edge</div>
+              <div class="metric-val blue" id="navEdges">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Connected</div>
+              <div class="metric-val green" id="navConnected">&#x2714;</div>
+            </div>
+          </div>
+          <div class="metric-row" style="margin-top:6px">
+            <div class="metric-card">
+              <div class="metric-label">Zoom Level</div>
+              <div class="metric-val mono" id="navZoom">&#x2014;</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Gen. Peta</div>
+              <div class="metric-val gold" id="navMapGen">Prim MST</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Bobot Edge</div>
+              <div class="metric-val small2" id="navWeight">Euclidean</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Algorithm Info -->
+        <div class="info-section">
+          <div class="section-title">&#x1F9EE; Info Algoritma</div>
+          <div class="algo-list">
+            <div class="algo-row">
+              <span class="algo-key">Pathfinding</span>
+              <span class="algo-val accent-purple" id="navAlgorithm">Dijkstra</span>
+            </div>
+            <div class="algo-row">
+              <span class="algo-key">Kompleksitas</span>
+              <span class="algo-val mono">O(E log V)</span>
+            </div>
+            <div class="algo-row">
+              <span class="algo-key">Priority Queue</span>
+              <span class="algo-val mono">Min-Heap</span>
+            </div>
+            <div class="algo-row">
+              <span class="algo-key">Bobot Edge</span>
+              <span class="algo-val mono">Euclidean</span>
+            </div>
+            <div class="algo-row">
+              <span class="algo-key">Map Gen</span>
+              <span class="algo-val accent-purple">Prim's MST</span>
+            </div>
+            <div class="algo-row">
+              <span class="algo-key">Rendering</span>
+              <span class="algo-val mono">Bezier Kuadratik</span>
+            </div>
+            <div class="algo-row">
+              <span class="algo-key">Animasi</span>
+              <span class="algo-val mono">Bezier Tangent</span>
+            </div>
+            <div class="algo-row">
+              <span class="algo-key">Viewport</span>
+              <span class="algo-val mono">World &#x2192; Screen</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Legend + Help -->
+        <div class="info-section">
+          <div class="section-title">&#x1F3AE; Legenda &amp; Kontrol</div>
+          <div class="legend">
+            <div class="leg-row"><span class="leg-dot" style="background:#22c55e"></span> Titik Asal</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#ef4444"></span> Titik Tujuan</div>
+            <div class="leg-row"><span class="leg-line gold"></span> Rute Terpendek</div>
+            <div class="leg-row"><span class="leg-line muted dashed"></span> Jalan Biasa</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#f59e0b"></span> Kendaraan</div>
+          </div>
+          <div class="help-list" style="margin-top:10px">
+            <div>&#x2423; <kbd>Spasi</kbd> Start / Pause</div>
+            <div>&#x1F504; <kbd>R</kbd> Acak Peta Baru</div>
+            <div>&#x1F50D; <em>Scroll</em> Zoom In/Out</div>
+            <div>&#x270B; <em>Drag</em> Geser Peta</div>
+          </div>
+        </div>
+
+      </div><!-- /info-panel -->
+    </div><!-- /main-content -->
+  </div><!-- /container -->
+
+  <div id="toast"></div>
+
+  <script>
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        r=Math.min(r,w/2,h/2);
+        this.beginPath(); this.moveTo(x+r,y);
+        this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r);
+        this.arcTo(x,y+h,x,y,r);     this.arcTo(x,y,x+w,y,r);
+        this.closePath();
+      };
+    }
+  </script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
