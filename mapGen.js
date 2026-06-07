@@ -164,7 +164,18 @@ export class MapGenerator {
     }
   }
 
-  
+  rebuildGlobalArrays() {
+    const edgeSet = new Set();
+    const newEdges = [];
+    
+    const addEdge = (a, b) => {
+      const min = Math.min(a, b);
+      const max = Math.max(a, b);
+      const key = `${min}-${max}`;
+      if (!edgeSet.has(key)) {
+        edgeSet.add(key);
+        newEdges.push([min, max]);
+      }
     };
 
     for (const e of this.stitchEdges) addEdge(e[0], e[1]);
