@@ -60,7 +60,16 @@ class MinHeap {
    *
    * Rumus parent dari node i: Math.floor((i-1) / 2)
    */
-
+  _bubbleUp(i) {
+    while (i > 0) {
+      const parent = Math.floor((i - 1) / 2);
+      // Kalau parent sudah lebih kecil atau sama, posisi sudah benar
+      if (this.heap[parent].dist <= this.heap[i].dist) break;
+      // Tukar posisi dengan parent
+      [this.heap[parent], this.heap[i]] = [this.heap[i], this.heap[parent]];
+      i = parent;  // lanjut cek ke atas
+    }
+  }
 
   /**
    * _sinkDown(i)
