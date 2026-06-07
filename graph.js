@@ -79,4 +79,20 @@ export function buildGraph(nodes, edges) {
  * satu area dari area lain. Kalau ada node terisolasi, Dijkstra
  * tidak akan bisa nemuin rute ke sana.
  */
+export function isConnected(graph, startId) {
+  const visited = new Set([startId]);
+  const queue   = [startId];
 
+  while (queue.length > 0) {
+    const current = queue.shift();
+    for (const neighbor of graph.get(current)) {
+      if (!visited.has(neighbor.to)) {
+        visited.add(neighbor.to);
+        queue.push(neighbor.to);
+      }
+    }
+  }
+
+  // Kalau semua node sudah dikunjungi, graf terhubung penuh
+  return visited.size === graph.size;
+}
