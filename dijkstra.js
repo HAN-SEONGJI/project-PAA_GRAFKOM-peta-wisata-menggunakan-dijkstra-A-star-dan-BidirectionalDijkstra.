@@ -30,69 +30,72 @@
  * Semua operasi ini O(log n) karena tinggi pohon = log(n).
  */
 
-
-
-push(item) {
-  this.heap.push(item);
-  this._bubbleUp(this.heap.length - 1);  // naikan ke posisi yang bener
-}
-
-pop() {
-  const top = this.heap[0];       // simpan elemen terkecil dulu
-  const last = this.heap.pop();    // ambil elemen paling akhir
-  // kalau masih ada isi, tukar elemen terakhir ke posisi atas
-  // lalu turunkan ke posisi yang tepat
-  if (this.heap.length > 0) {
-    this.heap[0] = last;
-    this._sinkDown(0);
+class MinHeap {
+  constructor() {
+    this.heap = [];  // array internal, indeks 0 = elemen terkecil
   }
-  return top;
-}
+
+  push(item) {
+    this.heap.push(item);
+    this._bubbleUp(this.heap.length - 1);  // naikan ke posisi yang bener
+  }
+
+  pop() {
+    const top = this.heap[0];       // simpan elemen terkecil dulu
+    const last = this.heap.pop();    // ambil elemen paling akhir
+    // kalau masih ada isi, tukar elemen terakhir ke posisi atas
+    // lalu turunkan ke posisi yang tepat
+    if (this.heap.length > 0) {
+      this.heap[0] = last;
+      this._sinkDown(0);
+    }
+    return top;
+  }
 
   get size() { return this.heap.length; }
 
-/**
- * _bubbleUp(i)
- * Naikan elemen di indeks i ke atas sampai parent-nya lebih kecil
- * atau sudah sampai puncak. Dipanggil setelah push().
- *
- * Rumus parent dari node i: Math.floor((i-1) / 2)
- */
-_bubbleUp(i) {
-  while (i > 0) {
-    const parent = Math.floor((i - 1) / 2);
-    // Kalau parent sudah lebih kecil atau sama, posisi sudah benar
-    if (this.heap[parent].dist <= this.heap[i].dist) break;
-    // Tukar posisi dengan parent
-    [this.heap[parent], this.heap[i]] = [this.heap[i], this.heap[parent]];
-    i = parent;  // lanjut cek ke atas
+  /**
+   * _bubbleUp(i)
+   * Naikan elemen di indeks i ke atas sampai parent-nya lebih kecil
+   * atau sudah sampai puncak. Dipanggil setelah push().
+   *
+   * Rumus parent dari node i: Math.floor((i-1) / 2)
+   */
+  _bubbleUp(i) {
+    while (i > 0) {
+      const parent = Math.floor((i - 1) / 2);
+      // Kalau parent sudah lebih kecil atau sama, posisi sudah benar
+      if (this.heap[parent].dist <= this.heap[i].dist) break;
+      // Tukar posisi dengan parent
+      [this.heap[parent], this.heap[i]] = [this.heap[i], this.heap[parent]];
+      i = parent;  // lanjut cek ke atas
+    }
   }
-}
 
-/**
- * _sinkDown(i)
- * Turunkan elemen di indeks i ke bawah sampai kedua child-nya lebih
- * besar atau sudah jadi daun. Dipanggil setelah pop().
- *
- * Child kiri dari node i: 2*i + 1
- * Child kanan dari node i: 2*i + 2
- */
-_sinkDown(i) {
-  const n = this.heap.length;
-  while (true) {
-    let smallest = i;
-    const left = 2 * i + 1;
-    const right = 2 * i + 2;
-    // Cari anak yang paling kecil di antara i, left, right
-    if (left < n && this.heap[left].dist < this.heap[smallest].dist) smallest = left;
-    if (right < n && this.heap[right].dist < this.heap[smallest].dist) smallest = right;
-    // Kalau i sudah yang terkecil, posisi sudah benar
-    if (smallest === i) break;
-    // Tukar dengan anak yang terkecil
-    [this.heap[smallest], this.heap[i]] = [this.heap[i], this.heap[smallest]];
-    i = smallest;  // lanjut turun
+  /**
+   * _sinkDown(i)
+   * Turunkan elemen di indeks i ke bawah sampai kedua child-nya lebih
+   * besar atau sudah jadi daun. Dipanggil setelah pop().
+   *
+   * Child kiri dari node i: 2*i + 1
+   * Child kanan dari node i: 2*i + 2
+   */
+  _sinkDown(i) {
+    const n = this.heap.length;
+    while (true) {
+      let smallest = i;
+      const left = 2 * i + 1;
+      const right = 2 * i + 2;
+      // Cari anak yang paling kecil di antara i, left, right
+      if (left < n && this.heap[left].dist < this.heap[smallest].dist) smallest = left;
+      if (right < n && this.heap[right].dist < this.heap[smallest].dist) smallest = right;
+      // Kalau i sudah yang terkecil, posisi sudah benar
+      if (smallest === i) break;
+      // Tukar dengan anak yang terkecil
+      [this.heap[smallest], this.heap[i]] = [this.heap[i], this.heap[smallest]];
+      i = smallest;  // lanjut turun
+    }
   }
-}
 }
 
 /**
