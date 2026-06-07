@@ -137,18 +137,7 @@ function drawTerrain(ctx, nodes, camera) {
 /* ================================================================
    LAYER 2+3+4: JALAN (TROTOAR + ASPAL + MARKA)
    ================================================================ */
-function drawOneRoad(ctx, na, nb) {
-  // Hitung array titik kurva bezier secara manual
-  const pts = getCubicBezierPoints(na, nb, 0.25, 24);
 
-  // Fungsi helper untuk menggambar jalur (Trace Path) tanpa bezierCurveTo()
-  const tracePath = () => {
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length; i++) {
-      ctx.lineTo(pts[i].x, pts[i].y);
-    }
-  };
 
   // Trotoar beige
   tracePath();
