@@ -1,6 +1,7 @@
 /**
  * animator.js
  * Ngurus pergerakan kendaraan di atas rute hasil Dijkstra.
+ * add origin
  *
  * Dua tantangan utama yang diselesaikan file ini:
  *  1. Kendaraan harus bergerak MULUS di atas jalan — bukan lompat
@@ -32,13 +33,7 @@ import { getCubicControlPoints } from "./renderer.js";
 // Load gambar car.png dari folder assets pas file ini pertama diload.
 // Kalau berhasil, gambar mobil asli yang ditampilkan.
 // Kalau gagal (misal file tidak ada), pakai gambar geometris sebagai fallback.
-const _spr = {};
-;(function () {
-  const img = new Image();
-  img.onload  = () => { _spr.car = img; };
-  img.onerror = () => { _spr.car = null; };
-  img.src = "../assets/car.png";
-})();
+
 
 // ─── BEZIER POINT ─────────────────────────────────────────────────
 
