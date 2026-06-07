@@ -14,7 +14,6 @@
  *
  * Ngitung jarak lurus antara dua titik koordinat di peta.
  * Rumusnya dari Pythagoras: jarak = akar( (x2-x1)² + (y2-y1)² )
- *
  * Kenapa pakai Euclidean? Karena koordinat node kita pakai piksel layar,
  * dan jarak piksel yang paling masuk akal ya jarak garis lurus.
  * Ini yang nanti jadi bobot (weight) tiap edge di graf.

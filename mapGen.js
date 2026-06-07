@@ -5,6 +5,7 @@
  * - Titik (0,0) adalah Pusat Kuliner / Hub.
  * - Titik (0,1) adalah Gerbang Masuk & Parkir.
  * - Chunk lain memunculkan Wahana dan Spot rekreasi.
+ * - genereate map dari node ke node dan edge nya untuk menghubungkan jalan nya dengan graph
  */
 
 import { makeRng } from "./prng.js";
