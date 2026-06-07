@@ -14,6 +14,7 @@
  *  2. Camera dibuat dengan ukuran canvas yang sudah benar
  *  3. computeRoute() dipanggil → Dijkstra jalan untuk rute default
  *  4. requestAnimationFrame mulai → render loop berjalan terus
+ * update file sistem pada main.js
  */
 
 import { buildGraph }                    from "./graph.js";
