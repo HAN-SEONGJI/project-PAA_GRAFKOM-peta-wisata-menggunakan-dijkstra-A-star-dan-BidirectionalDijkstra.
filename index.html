@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 
   <title>Peta Spasial Perkotaan — Navigasi Dijkstra</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
   <div class="container">
 
@@ -18,15 +20,20 @@
     </div>
 
     <div class="controls">
-      <button class="btn btn-green"  id="btnStart">&#9654; Start</button>
+      <button class="btn btn-green" id="btnStart">&#9654; Start</button>
       <button class="btn btn-purple" id="btnRandMap">&#x1F500; Acak Peta</button>
       <button class="btn btn-purple" id="btnRandPos">&#x1F3B2; Acak Posisi Awal</button>
-      <button class="btn btn-blue"   id="btnSetStart">&#x1F7E2; Set Asal</button>
-      <button class="btn btn-blue"   id="btnSetGoal">&#x1F534; Set Tujuan</button>
-      <button class="btn btn-red"    id="btnReset">&#x1F504; Reset</button>
-      <input type="text" id="seedInput" placeholder="Seed Peta..." style="background: #333; color: white; border: 1px solid #555; padding: 6px 10px; font-family: inherit; font-size: 0.9rem; border-radius: 4px; outline: none; width: 120px;" title="Masukkan kata kunci/seed untuk Map yang deterministik (ala Minecraft)"/>
-      <button class="btn" id="btnToggleTiles" style="background: #4b5563; color: white; border: 1px solid #555; padding: 6px 12px; border-radius: 4px; cursor: pointer;">&#x25A6; Map Tiles: OFF</button>
-      <select id="algoSelect" class="btn" style="background: #333; color: white; border: 1px solid #555; padding: 6px 12px; font-family: inherit; font-size: 0.9rem; border-radius: 4px; cursor: pointer; outline: none;">
+      <button class="btn btn-blue" id="btnSetStart">&#x1F7E2; Set Asal</button>
+      <button class="btn btn-blue" id="btnSetGoal">&#x1F534; Set Tujuan</button>
+      <button class="btn btn-red" id="btnReset">&#x1F504; Reset</button>
+      <input type="text" id="seedInput" placeholder="Seed Peta..."
+        style="background: #333; color: white; border: 1px solid #555; padding: 6px 10px; font-family: inherit; font-size: 0.9rem; border-radius: 4px; outline: none; width: 120px;"
+        title="Masukkan kata kunci/seed untuk Map yang deterministik (ala Minecraft)" />
+      <button class="btn" id="btnToggleTiles"
+        style="background: #4b5563; color: white; border: 1px solid #555; padding: 6px 12px; border-radius: 4px; cursor: pointer;">&#x25A6;
+        Map Tiles: OFF</button>
+      <select id="algoSelect" class="btn"
+        style="background: #333; color: white; border: 1px solid #555; padding: 6px 12px; font-family: inherit; font-size: 0.9rem; border-radius: 4px; cursor: pointer; outline: none;">
         <option value="dijkstra">Dijkstra</option>
         <option value="astar">A* (A-Star)</option>
         <option value="bidirectional">Bidirectional Dijkstra</option>
@@ -36,11 +43,7 @@
 
     <div class="main-content">
 
-      <!-- Canvas -->
-      <div class="canvas-container">
-        <canvas id="mapCanvas"></canvas>
-        <div class="map-hint">Scroll: Zoom &nbsp;|&nbsp; Drag: Geser &nbsp;|&nbsp; Klik Node: Pilih Titik</div>
-      </div>
+
 
       <!-- Info Panel -->
       <div class="info-panel">
@@ -52,7 +55,9 @@
             <span class="status-dot status-ready"></span>
             <span id="statusText">Siap</span>
           </div>
-          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
         </div>
 
         <!-- 2. Route Planning -->
@@ -244,15 +249,16 @@
 
   <script>
     if (!CanvasRenderingContext2D.prototype.roundRect) {
-      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
-        r=Math.min(r,w/2,h/2);
-        this.beginPath(); this.moveTo(x+r,y);
-        this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r);
-        this.arcTo(x,y+h,x,y,r);     this.arcTo(x,y,x+w,y,r);
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        r = Math.min(r, w / 2, h / 2);
+        this.beginPath(); this.moveTo(x + r, y);
+        this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r);
+        this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r);
         this.closePath();
       };
     }
   </script>
   <script type="module" src="js/main.js"></script>
 </body>
+
 </html>
