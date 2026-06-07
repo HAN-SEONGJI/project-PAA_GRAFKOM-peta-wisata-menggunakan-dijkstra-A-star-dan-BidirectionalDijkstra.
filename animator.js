@@ -34,7 +34,13 @@ import { getCubicControlPoints } from "./renderer.js";
 // Kalau berhasil, gambar mobil asli yang ditampilkan.
 // Kalau gagal (misal file tidak ada), pakai gambar geometris sebagai fallback.
 
-
+const _spr = {};
+;(function () {
+  const img = new Image();
+  img.onload  = () => { _spr.car = img; };
+  img.onerror = () => { _spr.car = null; };
+  img.src = "../assets/car.png";
+})();
 // ─── BEZIER POINT ─────────────────────────────────────────────────
 
 /**
