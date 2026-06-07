@@ -40,7 +40,7 @@ class MinHeap {
   }
 
   pop() {
-    const top  = this.heap[0];       // simpan elemen terkecil dulu
+    const top = this.heap[0];       // simpan elemen terkecil dulu
     const last = this.heap.pop();    // ambil elemen paling akhir
     // kalau masih ada isi, tukar elemen terakhir ke posisi atas
     // lalu turunkan ke posisi yang tepat
@@ -60,16 +60,7 @@ class MinHeap {
    *
    * Rumus parent dari node i: Math.floor((i-1) / 2)
    */
-  _bubbleUp(i) {
-    while (i > 0) {
-      const parent = Math.floor((i - 1) / 2);
-      // Kalau parent sudah lebih kecil atau sama, posisi sudah benar
-      if (this.heap[parent].dist <= this.heap[i].dist) break;
-      // Tukar posisi dengan parent
-      [this.heap[parent], this.heap[i]] = [this.heap[i], this.heap[parent]];
-      i = parent;  // lanjut cek ke atas
-    }
-  }
+
 
   /**
    * _sinkDown(i)
@@ -83,10 +74,10 @@ class MinHeap {
     const n = this.heap.length;
     while (true) {
       let smallest = i;
-      const left  = 2 * i + 1;
+      const left = 2 * i + 1;
       const right = 2 * i + 2;
       // Cari anak yang paling kecil di antara i, left, right
-      if (left  < n && this.heap[left].dist  < this.heap[smallest].dist) smallest = left;
+      if (left < n && this.heap[left].dist < this.heap[smallest].dist) smallest = left;
       if (right < n && this.heap[right].dist < this.heap[smallest].dist) smallest = right;
       // Kalau i sudah yang terkecil, posisi sudah benar
       if (smallest === i) break;
@@ -130,7 +121,7 @@ class MinHeap {
 export function dijkstra(graph, startId) {
   const dist = new Map();   // jarak terpendek dari start ke tiap node
   const prev = new Map();   // node sebelumnya di jalur terpendek
-  const pq   = new MinHeap();
+  const pq = new MinHeap();
 
   // Inisialisasi: semua jarak tak hingga, belum ada jalur
   for (const id of graph.keys()) {
